@@ -1,0 +1,16 @@
+{
+  "name": "smart-carte",
+  "version": "1.0.0",
+  "description": "Smart Carte web-based geospatial analysis",
+  "devDependencies": {
+    "serverless": "^1.23.0",
+    "serverless-apigw-binary": "^0.4.1",
+    "serverless-offline": "^8.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/caseyslaught/smart-carte-lambda.git"
+  },
+  "author": "Casey Slaught",
+  "dependencies": {}
+}
