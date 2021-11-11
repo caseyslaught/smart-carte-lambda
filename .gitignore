@@ -1,6 +1,10 @@
 
 # Miscellaneous
 notes.txt
+test.png
+package/
+*test.json
+assets.json
 
 
 .DS_Store

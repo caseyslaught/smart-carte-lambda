@@ -1,0 +1,75 @@
+affine==2.3.0
+appdirs @ file:///home/conda/feedstock_root/build_artifacts/appdirs_1603108395799/work
+asciitree==0.3.3
+attrs @ file:///home/conda/feedstock_root/build_artifacts/attrs_1620387926260/work
+bokeh @ file:///D:/bld/bokeh_1625757103104/work
+brotlipy==0.7.0
+certifi==2021.10.8
+cffi @ file:///D:/bld/cffi_1631636516652/work
+cftime==1.5.1.1
+chardet @ file:///D:/bld/chardet_1610093614045/work
+charset-normalizer==2.0.7
+click==7.1.2
+click-plugins==1.1.1
+cligj @ file:///home/conda/feedstock_root/build_artifacts/cligj_1633637764473/work
+cloudpickle @ file:///home/conda/feedstock_root/build_artifacts/cloudpickle_1631273254894/work
+contextvars==2.4
+cryptography @ file:///D:/bld/cryptography_1634230407859/work
+cycler @ file:///home/conda/feedstock_root/build_artifacts/cycler_1635519461629/work
+cytoolz==0.11.0
+dask @ file:///home/conda/feedstock_root/build_artifacts/dask-core_1614995065708/work
+distributed @ file:///D:/bld/distributed_1615002770620/work
+entrypoints @ file:///home/conda/feedstock_root/build_artifacts/entrypoints_1605121927639/work/dist/entrypoints-0.3-py2.py3-none-any.whl
+fasteners==0.16.3
+fsspec @ file:///home/conda/feedstock_root/build_artifacts/fsspec_1636203345794/work
+HeapDict==1.0.1
+idna==3.3
+immutables @ file:///D:/bld/immutables_1628601448828/work
+intake @ file:///home/conda/feedstock_root/build_artifacts/intake_1633987330760/work
+intake-stac @ file:///home/conda/feedstock_root/build_artifacts/intake-stac_1602861610470/work
+intake-xarray @ file:///home/conda/feedstock_root/build_artifacts/intake-xarray_1616085063298/work
+Jinja2 @ file:///home/conda/feedstock_root/build_artifacts/jinja2_1636510082894/work
+kiwisolver @ file:///D:/bld/kiwisolver_1610099971815/work
+lambda-proxy==0.0.4
+locket==0.2.0
+MarkupSafe @ file:///D:/bld/markupsafe_1621455827344/work
+matplotlib @ file:///D:/bld/matplotlib-suite_1611858808344/work
+monotonic==1.5
+msgpack @ file:///D:/bld/msgpack-python_1610121913322/work
+netCDF4==1.5.8
+numcodecs @ file:///D:/bld/numcodecs_1630868820193/work
+numpy @ file:///D:/bld/numpy_1626682185159/work
+olefile @ file:///home/conda/feedstock_root/build_artifacts/olefile_1602866521163/work
+packaging @ file:///home/conda/feedstock_root/build_artifacts/packaging_1625323647219/work
+pandas @ file:///D:/bld/pandas_1607423921518/work
+partd @ file:///home/conda/feedstock_root/build_artifacts/partd_1617910651905/work
+Pillow @ file:///D:/bld/pillow_1630696770108/work
+psutil @ file:///D:/bld/psutil_1610127248133/work
+pycparser @ file:///home/conda/feedstock_root/build_artifacts/pycparser_1636257122734/work
+pyOpenSSL @ file:///home/conda/feedstock_root/build_artifacts/pyopenssl_1633192417276/work
+pyparsing @ file:///home/conda/feedstock_root/build_artifacts/pyparsing_1635593541381/work
+pyproj==1.9.6
+PyQt5==5.12.3
+PyQt5_sip==4.19.18
+PyQtChart==5.12
+PyQtWebEngine==5.12.1
+PySocks @ file:///D:/bld/pysocks_1610291695773/work
+python-dateutil==2.7.5
+pytz @ file:///home/conda/feedstock_root/build_artifacts/pytz_1633452062248/work
+PyYAML==6.0
+rasterio==1.1.7
+requests @ file:///home/conda/feedstock_root/build_artifacts/requests_1626393743643/work
+sat-search==0.3.0
+sat-stac @ file:///home/conda/feedstock_root/build_artifacts/sat-stac_1611559252873/work
+six @ file:///home/conda/feedstock_root/build_artifacts/six_1620240208055/work
+snuggs==1.4.7
+sortedcontainers @ file:///home/conda/feedstock_root/build_artifacts/sortedcontainers_1621217038088/work
+tblib @ file:///home/conda/feedstock_root/build_artifacts/tblib_1616261298899/work
+toolz @ file:///home/conda/feedstock_root/build_artifacts/toolz_1636177962100/work
+tornado @ file:///D:/bld/tornado_1610094881553/work
+typing-extensions @ file:///home/conda/feedstock_root/build_artifacts/typing_extensions_1632313171031/work
+urllib3 @ file:///home/conda/feedstock_root/build_artifacts/urllib3_1632350318291/work
+win-inet-pton @ file:///D:/bld/win_inet_pton_1610147511403/work
+xarray @ file:///home/conda/feedstock_root/build_artifacts/xarray_1621474818012/work
+zarr @ file:///home/conda/feedstock_root/build_artifacts/zarr_1633014346593/work
+zict==2.0.0

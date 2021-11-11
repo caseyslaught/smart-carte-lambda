@@ -3,8 +3,13 @@ from matplotlib import pyplot
 import rasterio
 
 
+def plot_histogram(array):
+    pyplot.hist(array)
+    pyplot.show()
+
+
 def plot_image(image):
-    pyplot.imshow(image, cmap='pink')
+    pyplot.imshow(image, cmap='RdYlGn')
     pyplot.show()
 
 
@@ -14,5 +19,8 @@ def plot_href(href):
     pyplot.show()
 
 
+def plot_ndvi(image):
+    pyplot.imshow(image, cmap='RdYlGn', vmin=-1, vmax=1)
+    pyplot.show()
 
 

@@ -5,7 +5,8 @@ import json
 
 from lambda_proxy.proxy import API
 
-import indices
+from app.sclib import parameters
+from app.sclib.utilities import cloud_mask, crop, filter_items_by_bands, get_bands, get_images, limit_items, stack
 
 
 APP = API(app_name="smart-carte")
@@ -15,32 +16,31 @@ def search():
     query_args = APP.current_request.query_params
     query_args = query_args if isinstance(query_args, dict) else {}
 
-    required_args = ['bounds', 'start', 'end', 'index']
-    if not all(arg in query_args.keys() for arg in required_args):
-        return ('Bad Request', 'application/json', 
-                json.dumps({"message": "query argument(s) missing: bounds, start, end, index"}))
-
     try:
-        bounds = query_args['bounds'].split(',')
-        bounds = [float(b) for b in bounds]
-    except:
-        return ('Bad Request', 'application/json', json.dumps({"message": "invalid bounds parameter"}))
+        valid_args = parameters.validate_parameters(query_args)
+    except Exception as e:
+        return ('NOK', 'application/json', json.dumps({"message": str(e)}))
 
-    try:
-        start = query_args['start']
-        start = datetime.strptime(start, '%Y-%m-%dT%H:%M:%S.%fZ')
-    except:
-        return ('Bad Request', 'application/json', json.dumps({"message": "invalid start parameter"}))
+    bbox, index = valid_args['bounds'], valid_args['index']
+    start, end = valid_args['start'], valid_args['end']
 
-    try:
-        end = query_args['end']
-        end = datetime.strptime(end, '%Y-%m-%dT%H:%M:%S.%fZ')
-    except:
-        return ('Bad Request', 'application/json', json.dumps({"message": "invalid start parameter"}))
+    bands = get_bands(index)
+    start_items = limit_items(get_images(bbox, start))
+    end_items = limit_items(get_images(bbox, end))
+    if len(start_items) == 0 or len(end_items) == 0:
+        return ('NOK', 'application/json', json.dumps({'message': 'not enough images'}))
 
-    index = query_args['index']
-    if index not in indices.INDICES.keys():
-        return ('Bad Request', 'application/json', json.dumps({"message": "invalid index parameter"}))
+    start_hrefs = filter_items_by_bands(start_items, bands)
+    start_cropped = crop(start_hrefs, bbox)
+    start_masked = [cloud_mask(item) for item in start_cropped]
 
-    return ('OK', 'application/json', json.dumps({"hello": "world!"}))
+
+    end_hrefs = filter_items_by_bands(end_items, bands)
+    end_cropped = crop(end_hrefs, bbox)
+    end_masked = [cloud_mask(item) for item in end_cropped]
+
+    return ('OK', 'application/json', json.dumps({
+        "start": len(start_items),
+        "end": len(end_items)
+    }))
 

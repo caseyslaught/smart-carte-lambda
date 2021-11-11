@@ -22,6 +22,7 @@ RUN pip3 install cython pytest-runner
 RUN pip3 install lambda-proxy==0.0.4 --no-binary numpy -t /tmp/vendored -U
 RUN pip3 install sat-search==0.3.0 -t /tmp/vendored -U
 RUN pip3 install pyproj==1.9.6 rasterio -t /tmp/vendored -U
+RUN pip3 install intake-stac -t /tmp/vendored -U
 
 # Reduce Lambda package size to fit the 250Mb limit
 # Mostly based on https://github.com/jamesandersen/aws-machine-learning-demo
