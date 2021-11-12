@@ -3,7 +3,7 @@
 INDICES = {
     'evi': ["blue", "red", "nir"],
     'natural': ["blue", "green", "red"],
-    'ndvi': ["red", "nir"]
+    'ndvi': ["red", "nir", "green", "blue"] # TODO: TESTING,
 }
 
 

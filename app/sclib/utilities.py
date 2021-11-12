@@ -24,8 +24,8 @@ def clip(darray, bbox):
 
 
 def cloud_mask_s2(darray):
-    # 3: cloud shadows; 8: medium cloud; 9: high cloud
-    mask = np.logical_not(darray.scl.isin([3, 8, 9]))
+    # 3: cloud shadows; 7: unclassified; 8: medium cloud; 9: high cloud; 10: cirrus; 11: snow
+    mask = np.logical_not(darray.scl.isin([3, 7, 8, 9, 10, 11]))
     return darray.where(mask, drop=True)
 
 
@@ -65,7 +65,9 @@ def get_composite_darray(catalog, bands, bbox):
     darray_list = list()
     for id in catalog:
         item = catalog[id]
-        darray_list.append(preprocess_item(item, bands, bbox))
+        item_processed = preprocess_item(item, bands, bbox)
+        helpers.save_rgb(item_processed, 'C:/Users/casey/Desktop/'+id+'.png')
+        darray_list.append(item_processed)
 
     darray_catalog = xr.concat(darray_list, 'datetime')
     #print('\n\ndataset_catalog\n', darray_catalog)
