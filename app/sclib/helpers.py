@@ -24,3 +24,14 @@ def plot_ndvi(image):
     pyplot.show()
 
 
+def save_image(image, path):
+    pyplot.imshow(image, cmap='RdYlGn')
+    pyplot.savefig(path)
+
+
+def save_ndvi(image, path):
+    pyplot.imshow(image, cmap='RdYlGn', vmin=-1, vmax=1)
+    pyplot.savefig(path)
+
+
+    
