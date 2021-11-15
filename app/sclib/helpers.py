@@ -11,8 +11,8 @@ def plot_histogram(array):
     pyplot.clf()
 
 
-def plot_image(image):
-    pyplot.imshow(image, cmap='RdYlGn')
+def plot_image(image, min=-1, max=1):
+    pyplot.imshow(image, cmap='RdYlGn', vmin=min, vmax=max)
     pyplot.show()
     pyplot.cla()
     pyplot.clf()
