@@ -4,6 +4,7 @@ conda activate <env_name>
 
 
 conda install -c conda-forge matplotlib rasterio intake-stac sat-search
+conda install -c conda-forge shapely
 conda install scipy
 
 pip install pyproj==1.9.6

@@ -1,9 +1,12 @@
 
 
 INDICES = {
+    'ari': ['green', 'B05'],
     'evi': ["blue", "red", "nir"],
-    'natural': ["blue", "green", "red"],
-    'ndvi': ["red", "nir", "green", "blue"] # TODO: TESTING,
+    'ndvi': ["red", "nir"],
+    'ndwi': ['green', 'nir'],
+    'true': ["blue", "green", "red"],
+    'test': ['B05']
 }
 
 
