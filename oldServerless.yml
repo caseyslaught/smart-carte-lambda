@@ -3,8 +3,6 @@ service: smartcarte
 provider:
   name: aws
   runtime: python3.8
-  memorySize: 10000
-  timeout: 600
   stage: production
   region: us-east-1
   iamRoleStatements:
@@ -18,9 +16,22 @@ provider:
       appimage:
         path: ./
 
+custom:
+  apigwBinary:
+    types:
+      - "*/*"
+
+plugins:
+  - serverless-apigw-binary
+
 functions:
   smart-carte:
     memorySize: 2000
     timeout: 30
     image:
       name: appimage
+    events:
+      - http:
+          path: sentinel/{proxy+}
+          method: get
+          cors: true

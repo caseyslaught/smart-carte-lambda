@@ -1,5 +1,5 @@
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 import intake_stac
 import numpy as np
@@ -8,9 +8,10 @@ from satsearch import Search
 from shapely.geometry import Polygon
 import xarray as xr
 
-from app.sclib import indices, helpers
 
-IMAGE_LIMIT = 5
+CLOUD_COVER_MAX = 40
+IMAGE_LIMIT = 4
+PADDING_DAYS = 30
 
 
 def clip(darray, bbox):
@@ -33,20 +34,16 @@ def cloud_mask_s2(darray):
     return darray.where(mask, drop=True)
 
 
-def get_bands(index):
-    return indices.INDICES[index]
-
-
 def get_catalog(bbox, target_date):
     
-    start = target_date - timedelta(days=30)
-    end = target_date + timedelta(days=30)
+    start = target_date - timedelta(days=PADDING_DAYS)
+    end = target_date + timedelta(days=PADDING_DAYS)
     date_range = start.strftime('%Y-%m-%dT%H:%M:%SZ') + '/' + end.strftime('%Y-%m-%dT%H:%M:%SZ')
 
     search = Search(bbox=bbox, 
                     url='https://earth-search.aws.element84.com/v0',
                     datetime=date_range, 
-                    query={'eo:cloud_cover': {'lt': 40}}, 
+                    query={'eo:cloud_cover': {'lt': CLOUD_COVER_MAX}}, 
                     collections=['sentinel-s2-l2a-cogs'],
                     sort=[{"field": "eo:cloudcover", "direction": "asc"}])
 
@@ -54,15 +51,31 @@ def get_catalog(bbox, target_date):
     return intake_stac.catalog.StacItemCollection(items)
 
 
-def get_interpolated_b05(item, darray):
+def get_interpolated_band(item, darray, band):
 
-    da_b05 = item.B05.to_dask()
-    da_b05 = da_b05.interp(y=darray['y'], x=darray['x'],
+    if band == 'B05':
+        da = item.B05.to_dask()
+    elif band == 'B06':
+        da = item.B06.to_dask()
+    elif band == 'B07':
+        da = item.B07.to_dask()
+    elif band == 'B8A':
+        da = item.B8A.to_dask()
+    elif band == 'B09':
+        da = item.B09.to_dask()
+    elif band == 'B11':
+        da = item.B11.to_dask()
+    elif band == 'B12':
+        da = item.B12.to_dask()
+    else:
+        raise ValueError('band not supported')
+
+    da = da.interp(y=darray['y'], x=darray['x'],
                             kwargs={'fill_value':'extrapolate'},
                             method='nearest').squeeze('band', drop=True)
-    da_b05['band'] = 'B05'
+    da['band'] = band
 
-    return da_b05
+    return da
 
 
 def get_interpolated_scl(item, darray):
@@ -77,48 +90,30 @@ def get_interpolated_scl(item, darray):
 
 def get_composite_darray(catalog, bands, bbox):
     
+    # TODO: sometimes there are two images for the same time, maybe skip if already added to darray_list
+
     count, limit = 0, IMAGE_LIMIT
     darray_list = list()
+    previous_datetimes = list()
     for id in catalog:
         item = catalog[id]
-        processed_item = preprocess_item(item, bands, bbox)
-        if processed_item is not None: # None if geometry doesn't contain bbox
-            darray_list.append(processed_item)
-            count += 1
-            if count >= limit:
-                break
+        item_datetime = item.metadata['datetime']
+        if item_datetime not in previous_datetimes:
+            processed_item = preprocess_item(item, bands, bbox)
+            if processed_item is not None: # None if geometry doesn't contain bbox
+                previous_datetimes.append(item_datetime)
+                darray_list.append(processed_item)
+                count += 1
+                if count >= limit:
+                    break
+    
+    if len(darray_list) == 0:
+        raise ValueError('darray_list is empty, probably due to geometry')
 
     darray_catalog = xr.concat(darray_list, 'datetime')
     darray_composite = darray_catalog.mean('datetime', skipna=True)
 
     return darray_composite
-
-
-def get_index_darray(darray, index):
-
-    if index == 'ari':
-        green = darray.sel(band='B03') + 0.00001
-        b05 = darray.sel(band='B05') + 0.00001
-        return 1.0 / green - 1.0 / b05
-
-    elif index == 'evi':
-        blue = darray.sel(band='B02')
-        nir = darray.sel(band='B08')
-        red = darray.sel(band='B04')
-        return 2.5 * (nir - red) / ((nir + 6.0 * red - 7.5 * blue) + 1.0)
-
-    elif index == 'ndvi':
-        nir = darray.sel(band='B08')
-        red = darray.sel(band='B04')
-        return (nir - red) / (nir + red)
-
-    elif index == 'ndwi':
-        nir = darray.sel(band='B08')
-        green = darray.sel(band='B03')
-        return (green - nir) / (green + nir)
-
-    else:
-        raise ValueError('index not found')
 
 
 def is_bbox_contained(bbox, geometry):
@@ -154,17 +149,19 @@ def preprocess_item(item, bands, bbox):
 
     geometry = item.metadata['geometry']['coordinates']
     if not is_bbox_contained(bbox, geometry):
+        print('bbox not contained by image geometry')
         return None
 
-    stack_bands = [b for b in bands if b not in ['B05']]
-    is_b05 = len(stack_bands) != len(bands)
+    different_gsd_bands = ['B05', 'B06', 'B07', 'B8A', 'B09', 'B11', 'B12']
+    stack_bands = [b for b in bands if b not in different_gsd_bands]
+    excluded_bands = [b for b in bands if b in different_gsd_bands]
 
     stack = item.stack_bands(stack_bands)
     darray = stack(chunks=dict(band=1, x=2048, y=2048)).to_dask()
 
-    if is_b05:
-        darray_b05 = get_interpolated_b05(item, darray)
-        darray = xr.concat([darray, darray_b05], dim='band')
+    for ex_band in excluded_bands:
+        darray_ex = get_interpolated_band(item, darray, ex_band)
+        darray = xr.concat([darray, darray_ex], dim='band')
 
     darray = darray * 0.0001
 

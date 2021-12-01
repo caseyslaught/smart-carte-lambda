@@ -1,9 +1,7 @@
 """app.sentinel: handle requests for Smart Carte"""
 
-from datetime import datetime
 import json
 
-from lambda_proxy.proxy import API
 import numpy as np
 
 from app.sclib import parameters
@@ -11,15 +9,20 @@ from app.sclib.indices import get_bands, get_index_darray
 from app.sclib.utilities import get_catalog, get_composite_darray
 
 
-APP = API(name="smart-carte")
+def handle(event, context):
 
-@APP.route('/search', methods=['GET'], cors=True)
-def search(bounds=None, start=None, end=None, index=None):
+    bounds = event['bounds']
+    start = event['start']
+    end = event['end']
+    index = event['index']
 
     try:
         valid_args = parameters.validate_parameters(bounds, start, end, index)
     except Exception as e:
-        return ('NOK', 'application/json', json.dumps({"message": str(e)}))
+        return {
+            'status': 'NOK',
+            'message': str(e)
+        }
 
     bbox, index = valid_args['bounds'], valid_args['index']
     start, end = valid_args['start'], valid_args['end']
@@ -30,19 +33,28 @@ def search(bounds=None, start=None, end=None, index=None):
     end_catalog = get_catalog(bbox, end)
 
     if len(list(start_catalog)) == 0 or len(list(end_catalog)) == 0:
-        return ('NOK', 'application/json', json.dumps({'message': 'not enough images'}))
+        return {
+            'status': 'NOK',
+            'message': 'not enough images'
+        }
 
     try:
         start_composite = get_composite_darray(start_catalog, bands, bbox)
     except ValueError:
-        return ('NOK', 'application/json', json.dumps({'message': 'no start image covers entire bbox'}))
+        return {
+            'status': 'NOK',
+            'message': 'no start image covers entire bbox'
+        }
 
     start_index = get_index_darray(start_composite, index)
 
     try:
         end_composite = get_composite_darray(end_catalog, bands, bbox)
     except ValueError:
-        return ('NOK', 'application/json', json.dumps({'message': 'no end image covers entire bbox'}))
+        return {
+            'status': 'NOK',
+            'message': 'no end image covers entire bbox'
+        }
 
     end_index = get_index_darray(end_composite, index)
 
@@ -52,10 +64,13 @@ def search(bounds=None, start=None, end=None, index=None):
         end_index = end_index.reindex({"y": list(reversed(end_index.y))})
 
     index_diff = end_index - start_index
-    index_mean = np.nanmean(index_diff)
+    index_diff_mean = np.nanmean(index_diff)
 
-    return ('OK', 'application/json', json.dumps({
-        'cloud_cover': 0.08,
-        'mean': round(index_mean, 4),
-    }))
+    return {
+        'status': 'OK',
+        'index': index,
+        'mean_change': round(index_diff_mean, 3),
+        'image_href': ''
+    }
+
 

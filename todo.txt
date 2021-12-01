@@ -1,0 +1,7 @@
+
+
++ look into cognito service thing for invoking lambda from frontend JS
++ figure out how to add aws credentials to S3 requests (maybe that speeds it up?)
+
+
++ refine smartcarte-users role to just execute Lambda

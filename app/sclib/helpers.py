@@ -1,7 +1,6 @@
 
 from matplotlib import pyplot
 import numpy as np
-import rasterio
 
 
 def plot_histogram(array):
@@ -18,19 +17,13 @@ def plot_image(image, min=-1, max=1):
     pyplot.clf()
 
 
-def plot_href(href):
-    src = rasterio.open(href)
-    pyplot.imshow(src.read(1), cmap='pink')
-    pyplot.show()
-    pyplot.cla()
-    pyplot.clf()
-
-
 def plot_index(image, index):
 
     min, max = -1, 1
     if index == 'ari':
         min, max = -10, 10
+    elif index == 'exgi':
+        min, max = -0.5, 0.5
 
     pyplot.imshow(image, cmap='RdYlGn', vmin=min, vmax=max)
     pyplot.show()
@@ -50,6 +43,10 @@ def save_index(image, path, index):
     min, max = -1, 1
     if index == 'ari':
         min, max = -10, 10
+    elif index == 'exgi':
+        min, max = -0.25, 0.25
+    elif index == 'psri':
+        min, max = -0.5, 0.5
 
     pyplot.imshow(image, cmap='RdYlGn', vmin=min, vmax=max)
     pyplot.savefig(path)
