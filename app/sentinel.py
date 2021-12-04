@@ -52,10 +52,18 @@ def search(bounds=None, start=None, end=None, index=None):
         end_index = end_index.reindex({"y": list(reversed(end_index.y))})
 
     index_diff = end_index - start_index
-    index_mean = np.nanmean(index_diff)
+    index_change = np.nanmean(index_diff)
+
+    cloud_count = np.count_nonzero(np.isnan(index_diff))
+    shape = index_diff.shape
+
+    cloud_area_ha = cloud_count / 100
+    total_area_ha = shape[0] * shape[1] / 100
 
     return ('OK', 'application/json', json.dumps({
-        'cloud_cover': 0.08,
-        'mean': round(index_mean, 4),
+        'index': index,
+        'total_area_ha': total_area_ha,
+        'cloud_area_ha': cloud_area_ha,
+        'index_change': round(index_change, 4),
+        'image_href': ''
     }))
-

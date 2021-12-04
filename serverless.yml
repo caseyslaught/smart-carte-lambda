@@ -17,6 +17,9 @@ provider:
     images:
       appimage:
         path: ./
+  environment:
+    SC_AWS_KEY: asdf
+    SC_AWS_SECRET: asdf
 
 functions:
   smart-carte:

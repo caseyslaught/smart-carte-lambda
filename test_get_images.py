@@ -45,9 +45,21 @@ if start_first_y == end_last_y:
 
 index_diff = end_index - start_index
 
-# TODO: how to interpret index mean as percentage increase?
 print(index_diff)
-print('difference mean:', np.nanmean(index_diff))
+
+cloud_count = np.count_nonzero(np.isnan(index_diff))
+shape = index_diff.shape
+
+cloud_area_ha = cloud_count / 100
+total_area_ha = shape[0] * shape[1] / 100
+
+print(cloud_area_ha, total_area_ha)
+print(cloud_area_ha / total_area_ha)
+
+
+# TODO: how to interpret index mean as percentage increase?
+#print(index_diff)
+#print('difference mean:', np.nanmean(index_diff))
 
 # index_diff_path = f'C:/Users/casey/Desktop/{index}_diff.png'
 # helpers.save_image(index_diff, index_diff_path)
