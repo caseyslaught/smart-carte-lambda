@@ -1,6 +1,4 @@
-"""app.sentinel: handle requests for Smart Carte"""
-
-import json
+"""app.handler: handle requests for Smart Carte from Lambda"""
 
 import numpy as np
 
@@ -64,13 +62,20 @@ def handle(event, context):
         end_index = end_index.reindex({"y": list(reversed(end_index.y))})
 
     index_diff = end_index - start_index
-    index_diff_mean = np.nanmean(index_diff)
+    index_change = np.nanmean(index_diff)
+
+    cloud_count = np.count_nonzero(np.isnan(index_diff))
+    shape = index_diff.shape
+
+    cloud_area_ha = cloud_count / 100
+    total_area_ha = shape[0] * shape[1] / 100
 
     return {
         'status': 'OK',
         'index': index,
-        'mean_change': round(index_diff_mean, 3),
+        'total_area_ha': total_area_ha,
+        'cloud_area_ha': cloud_area_ha,
+        'index_change': round(index_change, 4),
         'image_href': ''
     }
-
 

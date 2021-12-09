@@ -1,4 +1,4 @@
-service: smartcarte
+service: smart-carte
 
 provider:
   name: aws

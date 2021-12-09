@@ -10,7 +10,7 @@ import xarray as xr
 
 
 CLOUD_COVER_MAX = 40
-IMAGE_LIMIT = 4
+IMAGE_LIMIT = 3
 PADDING_DAYS = 30
 
 
